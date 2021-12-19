@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html lang="en">    
+    <head>
+        <meta charset="UTF-8">
+        <title>index</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript for bootstrap-->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+        <!-- External css file -->
+        <link rel="stylesheet" href="./css/style.css">
+        
+        <!-- External js file -->
+        <script src="./js/functions.js"></script>
+
+        <!-- local js script -->
+        <script>        
+            // On document ready, jquery
+            $(function () {
+                // On form submit
+                $('#frmText').on('submit', function (e) {
+
+                    // using this function to prevent the default refreshing 
+                    e.preventDefault();   
+
+                    // First, the submitting form must be validated
+                    if (! frm_validation(this)){
+                        $("#msg_empty").show();
+                        $("#msg_fail").hide();                        
+                        $("#msg_success").hide();
+                    }else{
+                        // If validated, submit it to php server using Ajax, Post
+                        $.ajax({    // ajax call starts
+                            type: 'POST',
+                            url: 'submit.php',
+                            data: $('#frmText').serialize(),
+                            dataType: 'json', // Choosing a JSON datatype
+                            success: function (data) { // if success, Variable response contains the data we get from serverside                        
+                                console.log(data);
+                                $("#msg_success").show();   // display the msg_success 
+                                $("#msg_empty").hide();     // and hide others
+                                $("#msg_fail").hide();
+                            },
+                            error: function (data, error) {      //if error,                                 
+                                // console.log(data.responseText);
+                                // console.log(error);  
+                                $("#msg_fail").show();      // display the msg_fail
+                                $("#msg_success").hide();   // and hide others
+                                $("#msg_empty").hide();                                
+                            }    
+                        });
+                    }
+                });
+            });
+        </script>    
+    </head>
+    <body>
+        <div id="inpForm" class="container">
+            <!-- Form to register a username and password -->
+            <form id="frmText">
+                <div class="form-group">
+                    <label for="uname">Username</label>
+                    <input type="text" class="form-control" id="uname" name="uname" placeholder="Enter username" value="tat">            
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Password</label>
+                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Password" value="test 1">
+                </div>                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        
+            <!-- Message to display when the data is successfully or unsuccesfully registered -->
+            <div>
+                <div id="msg_success" class="alert alert-success" role="alert" hidden>
+                    New record is successfully created!
+                </div>
+                <div id="msg_empty" class="alert alert-warning" role="alert" hidden>
+                    Please input username and password! 
+                </div>
+                <div id="msg_fail" class="alert alert-danger" role="alert" hidden>
+                    The new record is unsuccesfully created!
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
